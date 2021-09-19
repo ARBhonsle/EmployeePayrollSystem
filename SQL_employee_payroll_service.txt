@@ -188,3 +188,460 @@ mysql> select count(salary) from employee_payroll where gender = 'M' group by ge
 |             2 |
 +---------------+
 1 row in set (0.00 sec)
+
+========>UC8:
+mysql> alter table employee_payroll change employee_name employee_name varchar(50) not null;
+Query OK, 0 rows affected (3.75 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+mysql> alter table employee_payroll change id employee_id varchar(50);
+Query OK, 4 rows affected (2.20 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+mysql> desc employee_payroll;
++---------------+-------------+------+-----+---------+---------------------+
+| Field         | Type        | Null | Key | Default | Extra               |
++---------------+-------------+------+-----+---------+---------------------+
+| employee_id   | varchar(50) | NO   | PRI | NULL    | auto_increment      |
+| employee_name | varchar(50) | NO   |     | NULL    |                     |
+| salary        | double      | NO   |     | NULL    |                     |
+| start_date    | date        | NO   |     | NULL    |                     |
+| gender        | varchar(1)  | NO   |     | NULL    |                     |
++---------------+-------------+------+-----+---------+---------------------+
+5 rows in set (0.06 sec)
+mysql> select * from employee_payroll;
++-------------+---------------+--------+------------+--------+
+| employee_id | employee_name | salary | start_date | gender |
++-------------+---------------+--------+------------+--------+
+| 1           | alexa         | 123456 | 2021-08-09 | F      |
+| 2           | charlie       | 657424 | 2021-06-09 | M      |
+| 3           | betty         | 656824 | 2020-07-09 | F      |
+| 4           | bill          | 656824 | 2018-05-01 | M      |
++-------------+---------------+--------+------------+--------+
+4 rows in set (0.00 sec)
+
+mysql> create table employee_details(id int not null auto_increment, employee_id varchar(50) not null, employee_address varchar(50) not null, phone_number varchar(12) not null, city varchar(50) not null, zip int not null, state varchar(50) not null, country varchar(30) not null, primary key(id), foreign key (employee_id) references employee_payroll(employee_id)) ENGINE=InnoDB default charset=latin1;
+Query OK, 0 rows affected (1.00 sec)
+
+mysql> create table department_details(department_id int not null auto_increment, department_name varchar(50) not null, primary key(department_id)) ENGINE=INNODB default charset=latin1;
+Query OK, 0 rows affected (0.97 sec)
+
+mysql> create table employee_department(id int not null auto_increment, department_id int not null, employee_id varchar(50) not null, primary key(id), foreign key(department_id) references department_details(department_id), foreign key(employee_id) references employee_payroll(employee_id)) ENGINE=INNODB default charset=latin1;
+Query OK, 0 rows affected (1.10 sec)
+
+mysql> show tables;
++---------------------------+
+| Tables_in_payroll_service |
++---------------------------+
+| department_details        |
+| employee_department       |
+| employee_details          |
+| employee_payroll          |
++---------------------------+
+4 rows in set (0.05 sec)
+
+mysql> desc department_details;
++-----------------+-------------+------+-----+---------+----------------+
+| Field           | Type        | Null | Key | Default | Extra          |
++-----------------+-------------+------+-----+---------+----------------+
+| department_id   | int         | NO   | PRI | NULL    | auto_increment |
+| department_name | varchar(50) | NO   |     | NULL    |                |
++-----------------+-------------+------+-----+---------+----------------+
+2 rows in set (0.19 sec)
+mysql> desc employee_department;
++---------------+-------------+------+-----+---------+----------------+
+| Field         | Type        | Null | Key | Default | Extra          |
++---------------+-------------+------+-----+---------+----------------+
+| id            | int         | NO   | PRI | NULL    | auto_increment |
+| department_id | int         | NO   | MUL | NULL    |                |
+| employee_id   | varchar(50) | NO   | MUL | NULL    |                |
++---------------+-------------+------+-----+---------+----------------+
+3 rows in set (0.00 sec)
+mysql> desc employee_details;
++------------------+-------------+------+-----+---------+----------------+
+| Field            | Type        | Null | Key | Default | Extra          |
++------------------+-------------+------+-----+---------+----------------+
+| id               | int         | NO   | PRI | NULL    | auto_increment |
+| employee_id      | varchar(50) | NO   | MUL | NULL    |                |
+| employee_address | varchar(50) | NO   |     | NULL    |                |
+| phone_number     | varchar(12) | NO   |     | NULL    |                |
+| city             | varchar(50) | NO   |     | NULL    |                |
+| zip              | int         | NO   |     | NULL    |                |
+| state            | varchar(50) | NO   |     | NULL    |                |
+| country          | varchar(30) | NO   |     | NULL    |                |
++------------------+-------------+------+-----+---------+----------------+
+8 rows in set (0.04 sec)
+
+// insert sample data into department_details
+mysql> insert into department_details(department_id,department_name) values(1,'Sales');
+Query OK, 1 row affected (0.28 sec)
+
+mysql> insert into department_details(department_id,department_name) values(null,'Management');
+Query OK, 1 row affected (0.23 sec)
+
+mysql> insert into department_details(department_id,department_name) values(null,'Planning and Execution');
+Query OK, 1 row affected (0.16 sec)
+
+mysql> insert into department_details(department_id,department_name) values(null,'Research and Development');
+Query OK, 1 row affected (0.17 sec)
+
+mysql> insert into department_details(department_id,department_name) values(null,'Business Operations');
+Query OK, 1 row affected (0.06 sec)
+
+mysql> insert into department_details(department_id,department_name) values(null,'Fianacial Management');
+Query OK, 1 row affected (0.14 sec)
+
+mysql> insert into department_details(department_id,department_name) values(null,'HR Management');
+Query OK, 1 row affected (0.06 sec)
+mysql> select * from department_details;
++---------------+--------------------------+
+| department_id | department_name          |
++---------------+--------------------------+
+|             1 | Sales                    |
+|             2 | Management               |
+|             3 | Planning and Execution   |
+|             4 | Research and Development |
+|             5 | Business Operations      |
+|             6 | Fianacial Management     |
+|             7 | HR Management            |
++---------------+--------------------------+
+7 rows in set (0.00 sec)
+// insert sample data into employee_details
+mysql> insert into employee_details(id,employee_id,employee_address,phone_number,city,zip,state,country) values(1,1,'101, Bayleaf Apartments, Moon Street','919897345678','Montario',3463423,'BlueStone','France');
+Query OK, 1 row affected (0.29 sec)
+mysql> insert into employee_details(id,employee_id,employee_address,phone_number,city,zip,state,country) values(null,2,'1-F, Maple Estates, Blake Street','919897234678','Fleure',3463423,'Mario','France');
+Query OK, 1 row affected (0.16 sec)
+mysql> insert into employee_details(id,employee_id,employee_address,phone_number,city,zip,state,country) values(null,3,'13-H, Clair Beach, Sandra Street','919897234238','Antanio',3456423,'Catolla','Spain');
+Query OK, 1 row affected (0.20 sec)
+mysql> insert into employee_details(id,employee_id,employee_address,phone_number,city,zip,state,country) values(null,4,'Greenland Homes, Frostwood','919897239938','Astero',3456482,'Calian','Sweden');
+Query OK, 1 row affected (0.21 sec)
+mysql> select * from employee_details;
++----+-------------+--------------------------------------+--------------+----------+---------+-----------+---------+
+| id | employee_id | employee_address                     | phone_number | city     | zip     | state     | country |
++----+-------------+--------------------------------------+--------------+----------+---------+-----------+---------+
+|  1 | 1           | 101, Bayleaf Apartments, Moon Street | 919897345678 | Montario | 3463423 | BlueStone | France  |
+|  2 | 2           | 1-F, Maple Estates, Blake Street     | 919897234678 | Fleure   | 3463423 | Mario     | France  |
+|  3 | 3           | 13-H, Clair Beach, Sandra Street     | 919897234238 | Antanio  | 3456423 | Catolla   | Spain   |
+|  4 | 4           | Greenland Homes, Frostwood           | 919897239938 | Astero   | 3456482 | Calian    | Sweden  |
++----+-------------+--------------------------------------+--------------+----------+---------+-----------+---------+
+4 rows in set (0.02 sec)
+
+mysql> insert into employee_department(id,department_id,employee_id) values(1,2,1);
+Query OK, 1 row affected (0.22 sec)
+
+mysql> insert into employee_department(id,department_id,employee_id) values(null,1,2);
+Query OK, 1 row affected (0.14 sec)
+
+mysql> insert into employee_department(id,department_id,employee_id) values(null,4,3);
+Query OK, 1 row affected (0.12 sec)
+
+mysql> insert into employee_department(id,department_id,employee_id) values(null,6,4);
+Query OK, 1 row affected (0.17 sec)
+
+mysql> select * from employee_department;
++----+---------------+-------------+
+| id | department_id | employee_id |
++----+---------------+-------------+
+|  1 |             2 | 1           |
+|  2 |             1 | 2           |
+|  3 |             4 | 3           |
+|  4 |             6 | 4           |
++----+---------------+-------------+
+4 rows in set (0.00 sec)
+
+========>UC9:
+mysql> create table salary_details(employee_id varchar(50) not null, basic_pay double not null, deductions double not null, taxable_pay double not null, income_tax double not null, net_pay double not null, foreign key(employee_id) references employee_payroll(employee_id)) ENGINE=INNODB default charset=latin1;
+Query OK, 0 rows affected (2.20 sec)
+mysql> desc salary_details;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| employee_id | varchar(50) | NO   | MUL | NULL    |       |
+| basic_pay   | double      | NO   |     | NULL    |       |
+| deductions  | double      | NO   |     | NULL    |       |
+| taxable_pay | double      | NO   |     | NULL    |       |
+| income_tax  | double      | NO   |     | NULL    |       |
+| net_pay     | double      | NO   |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+mysql> alter table employee_payroll drop salary;
+Query OK, 0 rows affected (1.85 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+mysql> desc employee_payroll;
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| employee_id   | varchar(50) | NO   | PRI | NULL    |       |
+| employee_name | varchar(50) | NO   |     | NULL    |       |
+| start_date    | date        | NO   |     | NULL    |       |
+| gender        | varchar(1)  | NO   |     | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+4 rows in set (0.02 sec)
+
+========>UC10:
+mysql> insert into employee_payroll(employee_id,employee_name,start_date,gender) values(5,'Terissa','2018-07-11','F');
+Query OK, 1 row affected (0.12 sec)
+mysql> insert into employee_details(id,employee_id,employee_address,phone_number,city,zip,state,country) values(null,5,'BlueStone Villa, Cobbers Lane',919834984567,'Parkenos',563890,'Montana','Britain');
+Query OK, 1 row affected (0.29 sec)
+mysql> insert into salary_details(employee_id,basic_pay,deductions,taxable_pay,income_tax,net_pay) values(5,6000000,8000,2000,10000,5980000);
+Query OK, 1 row affected (0.06 sec)
+mysql> insert into department_details(department_id,department_name) values(null,'Marketing');
+Query OK, 1 row affected (0.18 sec)
+mysql> insert into employee_department(id,department_id,employee_id) values(null,8,5);
+Query OK, 1 row affected (0.45 sec)
+
+mysql> select * from employee_payroll;
++-------------+---------------+------------+--------+
+| employee_id | employee_name | start_date | gender |
++-------------+---------------+------------+--------+
+| 1           | alexa         | 2021-08-09 | F      |
+| 2           | charlie       | 2021-06-09 | M      |
+| 3           | betty         | 2020-07-09 | F      |
+| 4           | bill          | 2018-05-01 | M      |
+| 5           | Terissa       | 2018-07-11 | F      |
++-------------+---------------+------------+--------+
+5 rows in set (0.00 sec)
+
+mysql> select * from department_details;
++---------------+--------------------------+
+| department_id | department_name          |
++---------------+--------------------------+
+|             1 | Sales                    |
+|             2 | Management               |
+|             3 | Planning and Execution   |
+|             4 | Research and Development |
+|             5 | Business Operations      |
+|             6 | Fianacial Management     |
+|             7 | HR Management            |
+|             8 | Marketing                |
++---------------+--------------------------+
+8 rows in set (0.00 sec)
+
+mysql> select * from employee_details;
++----+-------------+--------------------------------------+--------------+----------+---------+-----------+---------+
+| id | employee_id | employee_address                     | phone_number | city     | zip     | state     | country |
++----+-------------+--------------------------------------+--------------+----------+---------+-----------+---------+
+|  1 | 1           | 101, Bayleaf Apartments, Moon Street | 919897345678 | Montario | 3463423 | BlueStone | France  |
+|  2 | 2           | 1-F, Maple Estates, Blake Street     | 919897234678 | Fleure   | 3463423 | Mario     | France  |
+|  3 | 3           | 13-H, Clair Beach, Sandra Street     | 919897234238 | Antanio  | 3456423 | Catolla   | Spain   |
+|  4 | 4           | Greenland Homes, Frostwood           | 919897239938 | Astero   | 3456482 | Calian    | Sweden  |
+|  5 | 5           | BlueStone Villa, Cobbers Lane        | 919834984567 | Parkenos |  563890 | Montana   | Britain |
++----+-------------+--------------------------------------+--------------+----------+---------+-----------+---------+
+5 rows in set (0.00 sec)
+
+mysql> select * from employee_department;
++----+---------------+-------------+
+| id | department_id | employee_id |
++----+---------------+-------------+
+|  1 |             2 | 1           |
+|  2 |             1 | 2           |
+|  3 |             4 | 3           |
+|  4 |             6 | 4           |
+|  5 |             1 | 5           |
+|  6 |             8 | 5           |
++----+---------------+-------------+
+6 rows in set (0.00 sec)
+
+// insert salary details;
+mysql> insert into salary_details(employee_id,basic_pay,deductions,taxable_pay,income_tax,net_pay) values(1,3600000,1000,1200,3600,3594200);selesct * from 
+Query OK, 1 row affected (0.47 sec)
+mysql> insert into salary_details(employee_id,basic_pay,deductions,taxable_pay,income_tax,net_pay) values(2,4600000,1000,1200,3600,4594200);
+Query OK, 1 row affected (0.18 sec)
+mysql> insert into salary_details(employee_id,basic_pay,deductions,taxable_pay,income_tax,net_pay) values(3,3000000,0,0,0,3000000);
+Query OK, 1 row affected (0.17 sec)
+
+mysql> select * from salary_details;
++-------------+-----------+------------+-------------+------------+---------+
+| employee_id | basic_pay | deductions | taxable_pay | income_tax | net_pay |
++-------------+-----------+------------+-------------+------------+---------+
+| 1           |   3600000 |       1000 |        1200 |       3600 | 3594200 |
+| 2           |   4600000 |       1000 |        1200 |       3600 | 4594200 |
+| 3           |   3000000 |          0 |           0 |          0 | 3000000 |
+| 4           |   2000000 |          0 |           0 |          0 | 2000000 |
+| 5           |   6000000 |       8000 |        2000 |      10000 | 5980000 |
++-------------+-----------+------------+-------------+------------+---------+
+5 rows in set (0.00 sec)
+
+========>UC11:
+ER Diagram
+
+========>UC12:
+mysql> show tables;
++---------------------------+
+| Tables_in_payroll_service |
++---------------------------+
+| department_details        |
+| employee_department       |
+| employee_details          |
+| employee_payroll          |
+| salary_details            |
++---------------------------+
+5 rows in set (0.12 sec)
+mysql> select * from department_details;
++---------------+--------------------------+
+| department_id | department_name          |
++---------------+--------------------------+
+|             1 | Sales                    |
+|             2 | Management               |
+|             3 | Planning and Execution   |
+|             4 | Research and Development |
+|             5 | Business Operations      |
+|             6 | Fianacial Management     |
+|             7 | HR Management            |
+|             8 | Marketing                |
++---------------+--------------------------+
+8 rows in set (0.00 sec)
+
+mysql> select * from employee_department;
++----+---------------+-------------+
+| id | department_id | employee_id |
++----+---------------+-------------+
+|  1 |             2 | 1           |
+|  2 |             1 | 2           |
+|  3 |             4 | 3           |
+|  4 |             6 | 4           |
+|  5 |             1 | 5           |
+|  6 |             8 | 5           |
++----+---------------+-------------+
+6 rows in set (0.00 sec)
+
+mysql> select * from employee_details;
++----+-------------+--------------------------------------+--------------+----------+---------+-----------+---------+
+| id | employee_id | employee_address                     | phone_number | city     | zip     | state     | country |
++----+-------------+--------------------------------------+--------------+----------+---------+-----------+---------+
+|  1 | 1           | 101, Bayleaf Apartments, Moon Street | 919897345678 | Montario | 3463423 | BlueStone | France  |
+|  2 | 2           | 1-F, Maple Estates, Blake Street     | 919897234678 | Fleure   | 3463423 | Mario     | France  |
+|  3 | 3           | 13-H, Clair Beach, Sandra Street     | 919897234238 | Antanio  | 3456423 | Catolla   | Spain   |
+|  4 | 4           | Greenland Homes, Frostwood           | 919897239938 | Astero   | 3456482 | Calian    | Sweden  |
+|  5 | 5           | BlueStone Villa, Cobbers Lane        | 919834984567 | Parkenos |  563890 | Montana   | Britain |
++----+-------------+--------------------------------------+--------------+----------+---------+-----------+---------+
+5 rows in set (0.00 sec)
+
+mysql> select * from employee_payroll;
++-------------+---------------+------------+--------+
+| employee_id | employee_name | start_date | gender |
++-------------+---------------+------------+--------+
+| 1           | alexa         | 2021-08-09 | F      |
+| 2           | charlie       | 2021-06-09 | M      |
+| 3           | betty         | 2020-07-09 | F      |
+| 4           | bill          | 2018-05-01 | M      |
+| 5           | Terissa       | 2018-07-11 | F      |
++-------------+---------------+------------+--------+
+5 rows in set (0.00 sec)
+
+mysql> select * from salary_details;
++-------------+-----------+------------+-------------+------------+---------+
+| employee_id | basic_pay | deductions | taxable_pay | income_tax | net_pay |
++-------------+-----------+------------+-------------+------------+---------+
+| 1           |   3600000 |       1000 |        1200 |       3600 | 3594200 |
+| 2           |   4600000 |       1000 |        1200 |       3600 | 4594200 |
+| 3           |   3000000 |          0 |           0 |          0 | 3000000 |
+| 4           |   2000000 |          0 |           0 |          0 | 2000000 |
+| 5           |   6000000 |       8000 |        2000 |      10000 | 5980000 |
++-------------+-----------+------------+-------------+------------+---------+
+5 rows in set (0.00 sec)
+
+mysql> select  t1.employee_id, t1.employee_name, t2.net_Pay  from employee_payroll t1, salary_details t2 where t1.employee_id=t2.employee_id and t1.employee_name ='charlie';
++-------------+---------------+---------+
+| employee_id | employee_name | net_Pay |
++-------------+---------------+---------+
+| 2           | charlie       | 4594200 |
++-------------+---------------+---------+
+1 row in set (0.00 sec)
+
+mysql> select  t1.employee_id, t1.employee_name, t2.net_Pay  from employee_payroll t1, salary_details t2 where t1.employee_id=t2.employee_id and t1.employee_name ='Terissa';
++-------------+---------------+---------+
+| employee_id | employee_name | net_Pay |
++-------------+---------------+---------+
+| 5           | Terissa       | 5980000 |
++-------------+---------------+---------+
+1 row in set (0.00 sec)
+
+mysql> select  t1.employee_id, t1.employee_name, t2.net_Pay  from employee_payroll t1, salary_details t2 where t1.employee_id=t2.employee_id and t1.start_date between cast('2018-01-01' as date) and date(NOW());
++-------------+---------------+---------+
+| employee_id | employee_name | net_Pay |
++-------------+---------------+---------+
+| 1           | alexa         | 3594200 |
+| 2           | charlie       | 4594200 |
+| 3           | betty         | 3000000 |
+| 4           | bill          | 2000000 |
+| 5           | Terissa       | 5980000 |
++-------------+---------------+---------+
+5 rows in set (0.12 sec)
+
+mysql> select sum(t2.net_Pay)  from employee_payroll t1, salary_details t2 where t1.employee_id=t2.employee_id and t1.gender='M' group by t1.gender;
++-----------------+
+| sum(t2.net_Pay) |
++-----------------+
+|         6594200 |
++-----------------+
+1 row in set (0.00 sec)
+
+mysql> select sum(t2.net_Pay)  from employee_payroll t1, salary_details t2 where t1.employee_id=t2.employee_id and t1.gender='F' group by t1.gender;
++-----------------+
+| sum(t2.net_Pay) |
++-----------------+
+|        12574200 |
++-----------------+
+1 row in set (0.00 sec)
+
+mysql> select avg(t2.net_Pay)  from employee_payroll t1, salary_details t2 where t1.employee_id=t2.employee_id and t1.gender='M' group by t1.gender;
++-----------------+
+| avg(t2.net_Pay) |
++-----------------+
+|         3297100 |
++-----------------+
+1 row in set (0.00 sec)
+
+mysql> select avg(t2.net_Pay)  from employee_payroll t1, salary_details t2 where t1.employee_id=t2.employee_id and t1.gender='F' group by t1.gender;
++-----------------+
+| avg(t2.net_Pay) |
++-----------------+
+|         4191400 |
++-----------------+
+1 row in set (0.00 sec)
+
+mysql> select min(t2.net_Pay) from employee_payroll t1, salary_details t2 where t1.employee_id=t2.employee_id and t1.gender='M';
++-----------------+
+| min(t2.net_Pay) |
++-----------------+
+|         2000000 |
++-----------------+
+1 row in set (0.79 sec)
+
+mysql> select min(t2.net_Pay) from employee_payroll t1, salary_details t2 where t1.employee_id=t2.employee_id and t1.gender='F';
++-----------------+
+| min(t2.net_Pay) |
++-----------------+
+|         3000000 |
++-----------------+
+1 row in set (0.00 sec)
+
+mysql> select max(t2.net_Pay) from employee_payroll t1, salary_details t2 where t1.employee_id=t2.employee_id and t1.gender='M';
++-----------------+
+| max(t2.net_Pay) |
++-----------------+
+|         4594200 |
++-----------------+
+1 row in set (0.00 sec)
+
+mysql> select max(t2.net_Pay) from employee_payroll t1, salary_details t2 where t1.employee_id=t2.employee_id and t1.gender='F';
++-----------------+
+| max(t2.net_Pay) |
++-----------------+
+|         5980000 |
++-----------------+
+1 row in set (0.00 sec)
+
+mysql> select count(t2.net_Pay) from employee_payroll t1, salary_details t2 where t1.employee_id=t2.employee_id and t1.gender='M' group by t1.gender;
++-------------------+
+| count(t2.net_Pay) |
++-------------------+
+|                 2 |
++-------------------+
+1 row in set (0.00 sec)
+mysql> select count(t2.net_Pay) from employee_payroll t1, salary_details t2 where t1.employee_id=t2.employee_id and t1.gender='F' group by t1.gender;
++-------------------+
+| count(t2.net_Pay) |
++-------------------+
+|                 3 |
++-------------------+
+1 row in set (0.00 sec)
