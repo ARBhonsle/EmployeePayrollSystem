@@ -539,6 +539,20 @@ mysql> select * from salary_details;
 +-------------+-----------+------------+-------------+------------+---------+
 5 rows in set (0.00 sec)
 
+mysql> select  t1.employee_id, t1.employee_name, t2.net_Pay, t4.department_id, t3.department_name, t5.phone_number, t1.gender, t1.start_date, t5.employee_address, t5.city, t5.zip, t5.state from employee_payroll t1, salary_details t2, department_details t3, employee_department t4, employee_details t5 where t1.employee_id = t2.employee_id and t1.employee_id= t4.employee_id and t1.employee_id= t5.employee_id and t4.department_id=t3.department_id ;
++-------------+---------------+---------+---------------+--------------------------+--------------+--------+------------+--------------------------------------+----------+---------+-----------+
+| employee_id | employee_name | net_Pay | department_id | department_name          | phone_number | gender | start_date | employee_address                     | city     | zip     | state     |
++-------------+---------------+---------+---------------+--------------------------+--------------+--------+------------+--------------------------------------+----------+---------+-----------+
+| 1           | alexa         | 3594200 |             2 | Management               | 919897345678 | F      | 2021-08-09 | 101, Bayleaf Apartments, Moon Street | Montario | 3463423 | BlueStone |
+| 2           | charlie       | 4594200 |             1 | Sales                    | 919897234678 | M      | 2021-06-09 | 1-F, Maple Estates, Blake Street     | Fleure   | 3463423 | Mario     |
+| 3           | betty         | 3000000 |             4 | Research and Development | 919897234238 | F      | 2020-07-09 | 13-H, Clair Beach, Sandra Street     | Antanio  | 3456423 | Catolla   |
+| 4           | bill          | 2000000 |             6 | Fianacial Management     | 919897239938 | M      | 2018-05-01 | Greenland Homes, Frostwood           | Astero   | 3456482 | Calian    |
+| 5           | Terissa       | 5980000 |             1 | Sales                    | 919834984567 | F      | 2018-07-11 | BlueStone Villa, Cobbers Lane        | Parkenos |  563890 | Montana   |
+| 5           | Terissa       | 5980000 |             8 | Marketing                | 919834984567 | F      | 2018-07-11 | BlueStone Villa, Cobbers Lane        | Parkenos |  563890 | Montana   |
++-------------+---------------+---------+---------------+--------------------------+--------------+--------+------------+--------------------------------------+----------+---------+-----------+
+6 rows in set (0.00 sec)
+
+mysql>
 mysql> select  t1.employee_id, t1.employee_name, t2.net_Pay  from employee_payroll t1, salary_details t2 where t1.employee_id=t2.employee_id and t1.employee_name ='charlie';
 +-------------+---------------+---------+
 | employee_id | employee_name | net_Pay |
